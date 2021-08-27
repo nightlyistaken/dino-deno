@@ -83,7 +83,7 @@ function player(x,y) {
 
 // Variables
 
-const fps = 9;
+const fps = 10;
 const gravity = 2;
 
 const playerDimensions = 300;
@@ -191,7 +191,7 @@ function gameLoop() {
     let { x, y, width, height } = cactusList[i];
 
     if (x <= 0 - cactusDimensions) {
-      cactusList[i].x = invertHeight + 100 + (cactusDimensions * Math.floor(Math.random(1000, 2000) * 10));
+      cactusList[i].x = invertHeight + Math.floor(Math.random(460, 540) * 10) + (cactusDimensions * Math.floor(Math.random(1000, 2000) * 10));
     }
     cactusList[i].x -= trackSpeed;
    
