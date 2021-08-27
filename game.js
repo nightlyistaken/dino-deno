@@ -113,7 +113,7 @@ let cactusY = 100 - 28;
 
 const mainFont = canvas.loadFont(
   "./fonts/mainfont.ttf",
-  128,
+  12,
   { style: "normal" },
 );
 const titleFont = canvas.loadFont(
@@ -128,6 +128,7 @@ let is_space = false;
 let gameOver = false;
 let intro = true;
 let trackX = 600;
+let score = 0;
 
 function gameLoop() {
   
@@ -174,12 +175,21 @@ function gameLoop() {
     playerY = 100 - 28;
   }
   cactusX -= 4;
+  score += 0.1;
+  canvas.renderFont(mainFont, Math.round(score).toString() ,{
+      blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
+    }, {
+      x: 550,
+      y: 30,
+    })
   if (cactusX <= 0 - cactusDimensions) {
     cactusX = invertHeight + cactusDimensions;
   }
   if(checkCollision(playerX, playerY, 44, 44, cactusX, cactusY, cactusDimensions, cactusDimensions)) {
     canvas.playMusic("./audio/game_over.wav");
+    gameOver = true;
     intro = true;
+    score = 0;
     return;
   }
   canvas.present();
