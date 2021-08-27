@@ -49,6 +49,11 @@ const playerImgJumpRun2 = canvas.createTextureFromSurface(playerSurfaceRun2);
 
 const playerSurfaceJump = canvas.loadSurface("sprites/dino.png");
 const playerImgJump = canvas.createTextureFromSurface(playerSurfaceJump);
+
+const rainSurface = canvas.loadSurface("sprites/rain.png");
+const rainImg = canvas.createTextureFromSurface(rainSurface);
+
+
 let animationCycle = 0;
 let textures = [
   playerImgJumpRun1,
@@ -70,46 +75,69 @@ function player(x,y) {
   }, {
     x: x,
     y: y,
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
   });
 }
 
-function cactus(c) {
-  canvas.copy(cactusImg, { x: 0, y: 0, width: c.width, height: c.height }, {
-    x: c.x,
-    y: c.y,
-    width: 34,
-    height: 34,
-  });
-}
 
 // Variables
 
 const fps = 9;
 const gravity = 2;
 
-const playerDimensions = 94;
+const playerDimensions = 300;
 let playerX = 300;
 let playerY = 50;
   
 const trackSurface = canvas.loadSurface("sprites/track.png");
 const trackImg = canvas.createTextureFromSurface(trackSurface);
 
-const cactusSurface = canvas.loadSurface("sprites/cactus.png");
-const cactusImg = canvas.createTextureFromSurface(cactusSurface);
+const cactusSurface1 = canvas.loadSurface("sprites/cactus.png");
+const cactusImg1 = canvas.createTextureFromSurface(cactusSurface1);
 const cactusDimensions = 54;
 let cactusX = 600 + cactusDimensions;
 let cactusY = 100 - 20;
 
+const cactusSurface2 = canvas.loadSurface("sprites/cactus-2.png");
+const cactusImg2 = canvas.createTextureFromSurface(cactusSurface2);
+
+const cactusSurface3 = canvas.loadSurface("sprites/cactus-3.png");
+const cactusImg3 = canvas.createTextureFromSurface(cactusSurface3);
+
+const cactusSurface4 = canvas.loadSurface("sprites/cactus-4.png");
+const cactusImg4 = canvas.createTextureFromSurface(cactusSurface4);
+
+const cactusTextures = [
+    cactusImg1,
+    cactusImg2,
+    cactusImg3,
+    cactusImg4,
+];
+
+function cactus(c) {
+  canvas.copy(c.texture, { x: 0, y: 0, width: c.width, height: c.height }, {
+    x: c.x,
+    y: c.y,
+    width: 34,
+    height: 34,
+  });
+
+}
 const cactusList = [];
+const rainList = [];
 
 function generateCactus() {
+  const texture1 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 1st cactus
-  cactusList.push({ x: 600 + cactusDimensions, y: cactusY, width: cactusDimensions, height: cactusDimensions });
-
+  cactusList.push({ texture: texture1, x: 600 + cactusDimensions, y: cactusY, width: cactusDimensions, height: cactusDimensions });
+  
+  const texture2 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 2nd cactus
-  cactusList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+  cactusList.push({ texture: texture2, x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+
+   rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+
 }
 generateCactus();
 const mainFont = canvas.loadFont(
@@ -128,10 +156,10 @@ let is_space = false;
 // Other handlers
 let gameOver = false;
 let intro = true;
-let trackX = 600;
+let trackX = 20;
 let score = 0;
 let trackSpeed = 4;
-
+let playing = false;
 function gameLoop() {
   
   canvas.setDrawColor(255,255,255,255);
@@ -151,6 +179,12 @@ function gameLoop() {
   canvas.clear();
   
   player(playerX, playerY);
+   canvas.copy(rainImg, { x: 0, y: 0, width: 20, height: 20 }, {
+    x: Math.floor(Math.random(30,600)),
+    y: 20,
+    width: 20,
+    height: 20,
+  });
 
   for (let i = 0; i < cactusList.length; i++) {
     cactus(cactusList[i]);
@@ -160,6 +194,7 @@ function gameLoop() {
       cactusList[i].x = invertHeight + 100 + (cactusDimensions * Math.floor(Math.random(1000, 2000) * 10));
     }
     cactusList[i].x -= trackSpeed;
+   
     if(checkCollision(playerX, playerY, 34, 34, x, y, width, height)) {
       canvas.playMusic("./audio/game_over.wav");
       gameOver = true;
@@ -228,6 +263,10 @@ for await (const event of canvas) {
       // Space
       if (event.keycode == 32 && !gameOver) {
         intro = false;
+        if (!playing) {
+          playing = true;
+          canvas.playMusic("./audio/click.wav");
+        }
         if(!is_space) is_space = true;
       }
       break;
