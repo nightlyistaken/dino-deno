@@ -74,29 +74,20 @@ function player(x,y) {
     height: 44,
   });
 }
-let lowerPipes = [];
-function cactus(x,y) {
-  for (let i = 1; i < 6; i++) {
-    const height = getRandomInt(100, 300);
-    const distance = (i == 1) ? 0 : cactusX;
-    // Screen width - Corresponding upper pipe height - Random Gap
-    lowerPipes.push({
-      x: 600 + (cactusX * i) + (distance * i),
-      height: 130 - height,
-    });
-  }
-  canvas.copy(cactusImg, { x: 0, y: 0, width: cactusDimensions, height: cactusDimensions }, {
-    x: x,
-    y: y,
-    width: 44,
-    height: 44,
+
+function cactus(c) {
+  canvas.copy(cactusImg, { x: 0, y: 0, width: c.width, height: c.height }, {
+    x: c.x,
+    y: c.y,
+    width: 34,
+    height: 34,
   });
 }
 
 // Variables
 
 const fps = 9;
-const gravity = 1;
+const gravity = 2;
 
 const playerDimensions = 94;
 let playerX = 300;
@@ -109,8 +100,18 @@ const cactusSurface = canvas.loadSurface("sprites/cactus.png");
 const cactusImg = canvas.createTextureFromSurface(cactusSurface);
 const cactusDimensions = 54;
 let cactusX = 600 + cactusDimensions;
-let cactusY = 100 - 28;
+let cactusY = 100 - 20;
 
+const cactusList = [];
+
+function generateCactus() {
+  // 1st cactus
+  cactusList.push({ x: 600 + cactusDimensions, y: cactusY, width: cactusDimensions, height: cactusDimensions });
+
+  // 2nd cactus
+  cactusList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+}
+generateCactus();
 const mainFont = canvas.loadFont(
   "./fonts/mainfont.ttf",
   12,
@@ -129,6 +130,7 @@ let gameOver = false;
 let intro = true;
 let trackX = 600;
 let score = 0;
+let trackSpeed = 4;
 
 function gameLoop() {
   
@@ -147,14 +149,30 @@ function gameLoop() {
     return;
   } 
   canvas.clear();
-
+  
   player(playerX, playerY);
-  cactus(cactusX, cactusY);
+
+  for (let i = 0; i < cactusList.length; i++) {
+    cactus(cactusList[i]);
+    let { x, y, width, height } = cactusList[i];
+
+    if (x <= 0 - cactusDimensions) {
+      cactusList[i].x = invertHeight + 100 + (cactusDimensions * Math.floor(Math.random(1000, 2000) * 10));
+    }
+    cactusList[i].x -= trackSpeed;
+    if(checkCollision(playerX, playerY, 34, 34, x, y, width, height)) {
+      canvas.playMusic("./audio/game_over.wav");
+      gameOver = true;
+      intro = true;
+      score = 0;
+      return;
+    }
+  }
   // Check if space bar is pressed and player is on the ground.
   if (is_space && playerY == 100 - 28) {
-    playerY -= 80;
+    playerY -= 100;
     is_space = false;
-    canvas.playMusic("./audio/jump.wav")
+    canvas.playMusic("./audio/jump.wav");
   } else {
     // Give player downwards acceleration
     playerY += gravity;
@@ -167,14 +185,21 @@ function gameLoop() {
     width: 600 * 2,
     height: 28,
   });
-  trackX -= 4;
+  trackX -= trackSpeed;
   if(trackX <= -130) {
     trackX = 0;
   }
   if (playerY >= 100 - 28) {
     playerY = 100 - 28;
   }
-  cactusX -= 4;
+
+  if (score >= 100) {
+      if(trackSpeed < 5) {
+        canvas.playMusic("./audio/score.wav");
+      }
+      trackSpeed = 5;
+  }
+  
   score += 0.1;
   canvas.renderFont(mainFont, Math.round(score).toString() ,{
       blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
@@ -182,16 +207,6 @@ function gameLoop() {
       x: 550,
       y: 30,
     })
-  if (cactusX <= 0 - cactusDimensions) {
-    cactusX = invertHeight + cactusDimensions;
-  }
-  if(checkCollision(playerX, playerY, 44, 44, cactusX, cactusY, cactusDimensions, cactusDimensions)) {
-    canvas.playMusic("./audio/game_over.wav");
-    gameOver = true;
-    intro = true;
-    score = 0;
-    return;
-  }
   canvas.present();
   Deno.sleepSync(fps);
 }
