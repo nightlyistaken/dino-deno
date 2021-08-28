@@ -60,7 +60,7 @@ let textures = [
   playerImgJumpRun2,
 ];
 
-function player(x,y) {
+function player(x, y) {
 
   animationCycle += 1;
   if (animationCycle >= 2) {
@@ -89,7 +89,7 @@ const gravity = 2;
 const playerDimensions = 300;
 let playerX = 300;
 let playerY = 50;
-  
+
 const trackSurface = canvas.loadSurface("sprites/track.png");
 const trackImg = canvas.createTextureFromSurface(trackSurface);
 
@@ -109,10 +109,10 @@ const cactusSurface4 = canvas.loadSurface("sprites/cactus-4.png");
 const cactusImg4 = canvas.createTextureFromSurface(cactusSurface4);
 
 const cactusTextures = [
-    cactusImg1,
-    cactusImg2,
-    cactusImg3,
-    cactusImg4,
+  cactusImg1,
+  cactusImg2,
+  cactusImg3,
+  cactusImg4,
 ];
 
 function cactus(c) {
@@ -131,12 +131,12 @@ function generateCactus() {
   const texture1 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 1st cactus
   cactusList.push({ texture: texture1, x: 600 + cactusDimensions, y: cactusY, width: cactusDimensions, height: cactusDimensions });
-  
+
   const texture2 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 2nd cactus
-  cactusList.push({ texture: texture2, x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+  cactusList.push({ texture: texture2, x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });
 
-   rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
+  // rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
 
 }
 generateCactus();
@@ -161,41 +161,40 @@ let score = 0;
 let trackSpeed = 4;
 let playing = false;
 function gameLoop() {
-  
-  canvas.setDrawColor(255,255,255,255);
-  
-  
+  canvas.setDrawColor(255, 255, 255, 255);
+
+
   canvas.present();
   canvas.clear();
   if (intro) {
-    canvas.renderFont(titleFont, "Dino Deno" ,{
+    canvas.renderFont(titleFont, "Dino Deno", {
       blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
     }, {
       x: 100,
       y: 30,
     })
     return;
-  } 
+  }
+
   canvas.clear();
-  
+
   player(playerX, playerY);
-   canvas.copy(rainImg, { x: 0, y: 0, width: 20, height: 20 }, {
-    x: Math.floor(Math.random(30,600)),
-    y: 20,
-    width: 20,
-    height: 20,
-  });
 
   for (let i = 0; i < cactusList.length; i++) {
     cactus(cactusList[i]);
     let { x, y, width, height } = cactusList[i];
 
     if (x <= 0 - cactusDimensions) {
-      cactusList[i].x = invertHeight + Math.floor(Math.random(460, 540) * 10) + (cactusDimensions * Math.floor(Math.random(1000, 2000) * 10));
+      const loc = () => Math.round(Math.random()) * invertHeight;
+      let gap = loc();
+      while(gap > invertHeight) gap = loc();
+      cactusList[i].x = invertHeight + gap;
+      cactusList[i].texture = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
     }
-    cactusList[i].x -= trackSpeed;
-   
-    if(checkCollision(playerX, playerY, 34, 34, x, y, width, height)) {
+
+    cactusList[i].x -= is_space ? trackSpeed + 10 : trackSpeed;
+
+    if (checkCollision(playerX, playerY, 14, 14, x, y, width, height)) {
       canvas.playMusic("./audio/game_over.wav");
       gameOver = true;
       intro = true;
@@ -205,7 +204,7 @@ function gameLoop() {
   }
   // Check if space bar is pressed and player is on the ground.
   if (is_space && playerY == 100 - 28) {
-    playerY -= 100;
+    playerY -= 70;
     is_space = false;
     canvas.playMusic("./audio/jump.wav");
   } else {
@@ -221,7 +220,7 @@ function gameLoop() {
     height: 28,
   });
   trackX -= trackSpeed;
-  if(trackX <= -130) {
+  if (trackX <= -130) {
     trackX = 0;
   }
   if (playerY >= 100 - 28) {
@@ -229,19 +228,19 @@ function gameLoop() {
   }
 
   if (score >= 100) {
-      if(trackSpeed < 5) {
-        canvas.playMusic("./audio/score.wav");
-      }
-      trackSpeed = 5;
+    if (trackSpeed < 5) {
+      canvas.playMusic("./audio/score.wav");
+    }
+    trackSpeed = 5;
   }
-  
+
   score += 0.1;
-  canvas.renderFont(mainFont, Math.round(score).toString() ,{
-      blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
-    }, {
-      x: 550,
-      y: 30,
-    })
+  canvas.renderFont(mainFont, Math.round(score).toString(), {
+    blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
+  }, {
+    x: 550,
+    y: 0,
+  })
   canvas.present();
   Deno.sleepSync(fps);
 }
@@ -252,7 +251,7 @@ function gameLoop() {
 canvas.present();
 
 for await (const event of canvas) {
-  switch(event.type) {
+  switch (event.type) {
     case "draw":
       gameLoop();
       break;
@@ -267,14 +266,14 @@ for await (const event of canvas) {
           playing = true;
           canvas.playMusic("./audio/click.wav");
         }
-        if(!is_space) is_space = true;
+        if (!is_space) is_space = true;
       }
       break;
     case "mouse_button_down":
       // Left click
-      if(event.button == 1 && !gameOver) {
+      if (event.button == 1 && !gameOver) {
         intro = false;
-        if(!is_space) is_space = true;
+        if (!is_space) is_space = true;
       }
       break;
     default:
