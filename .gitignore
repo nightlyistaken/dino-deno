@@ -1,3 +1,6 @@
 deno_sdl2
 dinosaur-find-deno
 some_examples.txt
+
+# For custom startup
+start.sh

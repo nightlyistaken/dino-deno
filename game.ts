@@ -1,13 +1,14 @@
-// Import deno_sdl2
 import { Canvas } from "https://deno.land/x/sdl2@0.1-alpha.6/src/canvas.ts";
-
+import { Dino } from "./Dino.ts";
 // In deno_sdl2, height and width is reverted in the system.
 // There is a issue, will remove invert when fixed.
 const invertHeight = 600;
 const invertWidth = 150;
 
-// Create canvas (window)
-const canvas = new Canvas({
+/**
+ * Create game window
+ */
+export const canvas = new Canvas({
   title: "dino",
   height: invertHeight,
   width: invertWidth,
@@ -19,76 +20,31 @@ const canvas = new Canvas({
   maximized: false,
 });
 
+const dino = new Dino(canvas);
+
 // Set cursor to cursor.png in sprites folder
 canvas.setCursor("sprites/cursor.png");
 
-// Functions
 function checkCollision(
-  x1,
-  y1,
-  w1,
-  h1,
-  x2,
-  y2,
-  w2,
-  h2,
-) {
+  x1: number,
+  y1: number,
+  w1: number,
+  h1: number,
+  x2: number,
+  y2: number,
+  w2: number,
+  h2: number,
+): boolean {
   return !(x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2);
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-const playerSurfaceRun1 = canvas.loadSurface("sprites/dino-run1.png");
-const playerImgJumpRun1 = canvas.createTextureFromSurface(playerSurfaceRun1);
-
-const playerSurfaceRun2 = canvas.loadSurface("sprites/dino-run2.png");
-const playerImgJumpRun2 = canvas.createTextureFromSurface(playerSurfaceRun2);
-
-const playerSurfaceJump = canvas.loadSurface("sprites/dino.png");
-const playerImgJump = canvas.createTextureFromSurface(playerSurfaceJump);
-
-const rainSurface = canvas.loadSurface("sprites/rain.png");
-const rainImg = canvas.createTextureFromSurface(rainSurface);
-
-
-let animationCycle = 0;
-let textures = [
-  playerImgJumpRun1,
-  playerImgJumpRun2,
-];
-
-function player(x, y) {
-
-  animationCycle += 1;
-  if (animationCycle >= 2) {
-    animationCycle = 0;
-  }
-  const texture = y !== 100 - 28 ? playerImgJump : textures[animationCycle];
-  canvas.copy(texture, {
-    x: 0,
-    y: 0,
-    width: playerDimensions,
-    height: playerDimensions,
-  }, {
-    x: x,
-    y: y,
-    width: 42,
-    height: 42,
-  });
-}
-
+// const rainSurface = canvas.loadSurface("sprites/rain.png");
+// const rainImg = canvas.createTextureFromSurface(rainSurface);
 
 // Variables
 
 const fps = 10;
 const gravity = 2;
-
-const playerDimensions = 300;
-let playerX = 300;
-let playerY = 50;
 
 const trackSurface = canvas.loadSurface("sprites/track.png");
 const trackImg = canvas.createTextureFromSurface(trackSurface);
@@ -96,8 +52,8 @@ const trackImg = canvas.createTextureFromSurface(trackSurface);
 const cactusSurface1 = canvas.loadSurface("sprites/cactus.png");
 const cactusImg1 = canvas.createTextureFromSurface(cactusSurface1);
 const cactusDimensions = 54;
-let cactusX = 600 + cactusDimensions;
-let cactusY = 100 - 20;
+const _cactusX: number = 600 + cactusDimensions;
+const cactusY: number = 100 - 20;
 
 const cactusSurface2 = canvas.loadSurface("sprites/cactus-2.png");
 const cactusImg2 = canvas.createTextureFromSurface(cactusSurface2);
@@ -115,29 +71,48 @@ const cactusTextures = [
   cactusImg4,
 ];
 
-function cactus(c) {
+function cactus(
+  c: { texture: number; width: number; height: number; x: number; y: number },
+) {
   canvas.copy(c.texture, { x: 0, y: 0, width: c.width, height: c.height }, {
     x: c.x,
     y: c.y,
     width: 34,
     height: 34,
   });
-
 }
-const cactusList = [];
-const rainList = [];
+const cactusList: {
+  texture: number;
+  y: number;
+  x: number;
+  width: number;
+  height: number;
+}[] = [];
 
 function generateCactus() {
-  const texture1 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
+  const texture1 =
+    cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 1st cactus
-  cactusList.push({ texture: texture1, x: 600 + cactusDimensions, y: cactusY, width: cactusDimensions, height: cactusDimensions });
+  cactusList.push({
+    texture: texture1,
+    x: 600 + cactusDimensions,
+    y: cactusY,
+    width: cactusDimensions,
+    height: cactusDimensions,
+  });
 
-  const texture2 = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
+  const texture2 =
+    cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
   // 2nd cactus
-  cactusList.push({ texture: texture2, x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });
+  cactusList.push({
+    texture: texture2,
+    x: 600 + (cactusDimensions * 2) + 800,
+    y: cactusY,
+    width: cactusDimensions,
+    height: cactusDimensions,
+  });
 
-  // rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });  
-
+  // rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });
 }
 generateCactus();
 const mainFont = canvas.loadFont(
@@ -152,7 +127,7 @@ const titleFont = canvas.loadFont(
 );
 
 // Key press handlers
-let is_space = false;
+let isSpace = false;
 // Other handlers
 let gameOver = false;
 let intro = true;
@@ -163,7 +138,6 @@ let playing = false;
 function gameLoop() {
   canvas.setDrawColor(255, 255, 255, 255);
 
-
   canvas.present();
   canvas.clear();
   if (intro) {
@@ -172,29 +146,32 @@ function gameLoop() {
     }, {
       x: 100,
       y: 30,
-    })
+      width: 30,
+      height: 30,
+    });
     return;
   }
 
   canvas.clear();
 
-  player(playerX, playerY);
+  dino.player();
 
   for (let i = 0; i < cactusList.length; i++) {
     cactus(cactusList[i]);
-    let { x, y, width, height } = cactusList[i];
+    const { x, y, width, height } = cactusList[i];
 
     if (x <= 0 - cactusDimensions) {
       const loc = () => Math.round(Math.random()) * invertHeight;
       let gap = loc();
-      while(gap > invertHeight) gap = loc();
+      while (gap > invertHeight) gap = loc();
       cactusList[i].x = invertHeight + gap;
-      cactusList[i].texture = cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
+      cactusList[i].texture =
+        cactusTextures[Math.floor(Math.random() * (cactusTextures.length - 1))];
     }
 
-    cactusList[i].x -= is_space ? trackSpeed + 10 : trackSpeed;
+    cactusList[i].x -= isSpace ? trackSpeed + 10 : trackSpeed;
 
-    if (checkCollision(playerX, playerY, 14, 14, x, y, width, height)) {
+    if (checkCollision(dino.x, dino.y, 14, 14, x, y, width, height)) {
       canvas.playMusic("./audio/game_over.wav");
       gameOver = true;
       intro = true;
@@ -203,16 +180,16 @@ function gameLoop() {
     }
   }
   // Check if space bar is pressed and player is on the ground.
-  if (is_space && playerY == 100 - 28) {
-    playerY -= 70;
-    is_space = false;
+  if (isSpace && dino.y == 100 - 28) {
+    dino.y -= 70;
+    isSpace = false;
     canvas.playMusic("./audio/jump.wav");
   } else {
     // Give player downwards acceleration
-    playerY += gravity;
+    dino.y += gravity;
   }
   // Reset space state
-  is_space = false;
+  isSpace = false;
   canvas.copy(trackImg, { x: 0, y: 0, width: 600 * 2, height: 28 }, {
     x: trackX,
     y: 130 - 28,
@@ -223,8 +200,8 @@ function gameLoop() {
   if (trackX <= -130) {
     trackX = 0;
   }
-  if (playerY >= 100 - 28) {
-    playerY = 100 - 28;
+  if (dino.y >= 100 - 28) {
+    dino.y = 100 - 28;
   }
 
   if (score >= 100) {
@@ -240,7 +217,9 @@ function gameLoop() {
   }, {
     x: 550,
     y: 0,
-  })
+    width: 30,
+    height: 30,
+  });
   canvas.present();
   Deno.sleepSync(fps);
 }
@@ -266,14 +245,14 @@ for await (const event of canvas) {
           playing = true;
           canvas.playMusic("./audio/click.wav");
         }
-        if (!is_space) is_space = true;
+        if (!isSpace) isSpace = true;
       }
       break;
     case "mouse_button_down":
       // Left click
       if (event.button == 1 && !gameOver) {
         intro = false;
-        if (!is_space) is_space = true;
+        if (!isSpace) isSpace = true;
       }
       break;
     default:
