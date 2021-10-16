@@ -1,6 +1,5 @@
-import { Canvas } from "https://deno.land/x/sdl2@0.1-alpha.6/src/canvas.ts";
 import { Entity } from "./Entity.ts";
-
+import { canvas } from "./game.ts";
 export class Dino extends Entity {
   textures: number[];
   animationCycle: number;
@@ -10,9 +9,9 @@ export class Dino extends Entity {
   playerImgJumpRun2: number;
   playerSurfaceJump: number;
   playerImgJump: number;
-  canvas: Canvas;
+  canvas: import("https://deno.land/x/sdl2@0.1-alpha.6/src/canvas.ts").Canvas;
 
-  constructor(canvas: Canvas) {
+  constructor() {
     super(300, 50, 300, 300);
     this.canvas = canvas;
     this.animationCycle = 0;
@@ -31,10 +30,7 @@ export class Dino extends Entity {
       this.playerSurfaceJump,
     );
 
-    this.textures = [
-      this.playerImgJumpRun1,
-      this.playerImgJumpRun2,
-    ];
+    this.textures = [this.playerImgJumpRun1, this.playerImgJumpRun2];
   }
   player() {
     this.animationCycle += 1;
@@ -44,16 +40,20 @@ export class Dino extends Entity {
     const texture = this.y !== 100 - 28
       ? this.playerImgJump
       : this.textures[this.animationCycle];
-    this.canvas.copy(texture, {
-      x: 0,
-      y: 0,
-      width: this.width,
-      height: this.height,
-    }, {
-      x: this.x,
-      y: this.y,
-      width: 42,
-      height: 42,
-    });
+    this.canvas.copy(
+      texture,
+      {
+        x: 0,
+        y: 0,
+        width: this.width,
+        height: this.height,
+      },
+      {
+        x: this.x,
+        y: this.y,
+        width: 42,
+        height: 42,
+      },
+    );
   }
 }

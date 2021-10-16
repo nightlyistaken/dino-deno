@@ -1,6 +1,4 @@
-// Import deno_sdl2
 export class Entity {
-  // Declare properties
   x: number;
   y: number;
   width: number;
