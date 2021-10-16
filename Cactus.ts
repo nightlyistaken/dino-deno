@@ -50,7 +50,5 @@ export class Cacti extends Entity {
       width: this.width,
       height: this.height,
     });
-
-    // rainList.push({ x: 600 + (cactusDimensions * 2) + 800, y: cactusY, width: cactusDimensions, height: cactusDimensions });
   }
 }

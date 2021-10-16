@@ -35,11 +35,6 @@ function checkCollision(
   return !(x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2);
 }
 
-// const rainSurface = canvas.loadSurface("sprites/rain.png");
-// const rainImg = canvas.createTextureFromSurface(rainSurface);
-
-// Variables
-
 const fps = 10;
 const gravity = 2;
 
@@ -66,7 +61,7 @@ function cactus(c: {
 }
 
 cacti.generateCactus();
-const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 12, {
+const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128, {
   style: "normal",
 });
 
@@ -173,13 +168,13 @@ function gameLoop() {
     mainFont,
     Math.round(score).toString(),
     {
-      blended: { color: { r: 0, g: 0, b: 0, a: 255 } },
+      blended: { color: { r: 4, g: 0, b: 0, a: 255 } },
     },
     {
-      x: 550,
+      x: 540,
       y: 0,
-      width: 30,
-      height: 30,
+      width: 44,
+      height: 40,
     },
   );
   canvas.present();
