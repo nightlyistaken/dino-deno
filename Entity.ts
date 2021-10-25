@@ -1,12 +1,18 @@
+interface EntityOptions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 export class Entity {
   x: number;
   y: number;
   width: number;
   height: number;
-  constructor(x: number, y: number, width: number, height: number) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+  constructor(options: EntityOptions) {
+    this.x = options.x;
+    this.y = options.y;
+    this.width = options.width;
+    this.height = options.height;
   }
 }

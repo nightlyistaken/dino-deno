@@ -9,10 +9,15 @@ export class Dino extends Entity {
   playerImgJumpRun2: number;
   playerSurfaceJump: number;
   playerImgJump: number;
-  canvas: import("https://deno.land/x/sdl2@0.1-alpha.6/src/canvas.ts").Canvas;
-
+  canvas: import("https://deno.land/x/sdl2@0.2-alpha.1/src/canvas.ts").Canvas;
+  // 300, 50, 300, 300
   constructor() {
-    super(300, 50, 300, 300);
+    super({
+      x: 300,
+      y: 50,
+      width: 300,
+      height: 300,
+    });
     this.canvas = canvas;
     this.animationCycle = 0;
     this.playerSurfaceRun1 = canvas.loadSurface("sprites/dino-run1.png");
@@ -24,7 +29,6 @@ export class Dino extends Entity {
     this.playerImgJumpRun2 = canvas.createTextureFromSurface(
       this.playerSurfaceRun2,
     );
-
     this.playerSurfaceJump = canvas.loadSurface("sprites/dino.png");
     this.playerImgJump = canvas.createTextureFromSurface(
       this.playerSurfaceJump,
@@ -32,7 +36,7 @@ export class Dino extends Entity {
 
     this.textures = [this.playerImgJumpRun1, this.playerImgJumpRun2];
   }
-  player() {
+  render() {
     this.animationCycle += 1;
     if (this.animationCycle >= 2) {
       this.animationCycle = 0;

@@ -1,39 +1,27 @@
-import { Canvas } from "https://deno.land/x/sdl2@0.1-alpha.6/src/canvas.ts";
+import { Canvas } from "https://deno.land/x/sdl2@0.2-alpha.1/src/canvas.ts";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
-
+import { checkCollision } from "./utils/checkCollision.ts";
 const canvasWidth = 600;
 const canvasHeight = 150;
 
 /** Game window */
 export const canvas = new Canvas({
   title: "dino",
-  height: canvasWidth,
-  width: canvasHeight,
+  height: canvasHeight,
+  width: canvasWidth,
   centered: true,
   fullscreen: false,
   hidden: false,
   resizable: false,
   minimized: false,
   maximized: false,
+  flags: null,
 });
 
 canvas.setCursor("sprites/cursor.png");
 const dino = new Dino();
 const cacti = new Cacti();
-
-function checkCollision(
-  x1: number,
-  y1: number,
-  w1: number,
-  h1: number,
-  x2: number,
-  y2: number,
-  w2: number,
-  h2: number,
-): boolean {
-  return !(x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2);
-}
 
 const fps = 10;
 const gravity = 2;
@@ -100,7 +88,7 @@ function gameLoop() {
 
   canvas.clear();
 
-  dino.player();
+  dino.render();
 
   for (let i = 0; i < cacti.cactusList.length; i++) {
     cactus(cacti.cactusList[i]);
@@ -116,8 +104,18 @@ function gameLoop() {
       ];
     }
     cacti.cactusList[i].x -= isSpace ? trackSpeed + 10 : trackSpeed;
-
-    if (checkCollision(dino.x, dino.y, 14, 14, x, y, width, height)) {
+    if (
+      checkCollision({
+        x1: dino.x,
+        y1: dino.y,
+        w1: 14,
+        h1: 14,
+        x2: x,
+        y2: y,
+        w2: width,
+        h2: height,
+      })
+    ) {
       canvas.playMusic("./audio/game_over.wav");
       intro = true;
       trackSpeed = 0;
@@ -163,7 +161,7 @@ function gameLoop() {
     trackSpeed = 5;
   }
 
-  score += 0.1;
+  score += 0.2;
   canvas.renderFont(
     mainFont,
     Math.round(score).toString(),

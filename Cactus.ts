@@ -9,8 +9,14 @@ export class Cacti extends Entity {
     width: number;
     height: number;
   }[];
+  // 654, 80, 54, 54
   constructor() {
-    super(654, 80, 54, 54);
+    super({
+      x: 654,
+      y: 80,
+      width: 54,
+      height: 54,
+    });
     const cactusSurface1 = canvas.loadSurface("sprites/cactus.png");
     const cactusImg1 = canvas.createTextureFromSurface(cactusSurface1);
 
