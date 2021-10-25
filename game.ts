@@ -5,6 +5,7 @@ import { checkCollision } from "./utils/checkCollision.ts";
 const canvasWidth = 600;
 const canvasHeight = 150;
 
+/** Game window */
 export const canvas = new Canvas({
   title: "dino",
   height: canvasHeight,
