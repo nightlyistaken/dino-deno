@@ -34,7 +34,7 @@ function cactus(c: {
   width: number;
   height: number;
   x: number;
-  y: number;
+  y: number; 
 }) {
   canvas.copy(
     c.texture,
