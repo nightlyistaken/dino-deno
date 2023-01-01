@@ -1,36 +1,31 @@
-import { Canvas } from "https://deno.land/x/sdl2@0.2-alpha.1/src/canvas.ts";
+import { Canvas, EventType, Rect, Surface, Texture, WindowBuilder } from "https://deno.land/x/sdl2/mod.ts";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
 import { checkCollision } from "./utils/checkCollision.ts";
 const canvasWidth = 600;
 const canvasHeight = 150;
 
+function sleepSync(timeout: number) {
+  const sab = new SharedArrayBuffer(1024);
+  const int32 = new Int32Array(sab);
+  Atomics.wait(int32, 0, 0, timeout);
+}
 /** Game window */
-export const canvas = new Canvas({
-  title: "dino",
-  height: canvasHeight,
-  width: canvasWidth,
-  centered: true,
-  fullscreen: false,
-  hidden: false,
-  resizable: false,
-  minimized: false,
-  maximized: false,
-  flags: null,
-});
+const window = new WindowBuilder("Dino Game", canvasWidth, canvasHeight).build();
+export const canvas = window.canvas();
 
-canvas.setCursor("sprites/cursor.png");
 const dino = new Dino();
 const cacti = new Cacti();
 
 const fps = 10;
 const gravity = 2;
 
-const trackSurface = canvas.loadSurface("sprites/track.png");
-const trackImg = canvas.createTextureFromSurface(trackSurface);
+const trackSurface = Surface.fromFile("./images/track.png");
+const creator = canvas.textureCreator();
+const trackImg = creator.createTextureFromSurface(trackSurface);
 
 function cactus(c: {
-  texture: number;
+  texture: Texture;
   width: number;
   height: number;
   x: number;
@@ -38,20 +33,13 @@ function cactus(c: {
 }) {
   canvas.copy(
     c.texture,
-    { x: 0, y: 0, width: c.width, height: c.height },
-    {
-      x: c.x,
-      y: c.y,
-      width: 34,
-      height: 34,
-    },
+    new Rect(0, 0, c.width, c.height),
+    new Rect(c.x, c.y, 34, 34)
   );
 }
 
 cacti.generateCactus();
-const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128, {
-  style: "normal",
-});
+const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128);
 
 // Key press handlers
 let isSpace = false;
@@ -70,18 +58,8 @@ function gameLoop() {
   if (intro) {
     dino.canvas.copy(
       dino.playerImgJump,
-      {
-        x: 0,
-        y: 0,
-        width: dino.width,
-        height: dino.height,
-      },
-      {
-        x: dino.x,
-        y: dino.y,
-        width: 42,
-        height: 42,
-      },
+      new Rect(0, 0, dino.width, dino.height),
+      new Rect(dino.x, dino.y, 42, 42),
     );
     return;
   }
@@ -116,7 +94,7 @@ function gameLoop() {
         h2: height,
       })
     ) {
-      canvas.playMusic("./audio/game_over.wav");
+      // canvas.playMusic("./audio/game_over.wav");
       intro = true;
       trackSpeed = 0;
       gameOver = true;
@@ -129,7 +107,7 @@ function gameLoop() {
   if (isSpace && dino.y == 100 - 28) {
     dino.y -= 70;
     isSpace = false;
-    canvas.playMusic("./audio/jump.wav");
+    // canvas.playMusic("./audio/jump.wav");
   } else {
     // Give player downwards acceleration
     dino.y += gravity;
@@ -138,13 +116,13 @@ function gameLoop() {
   isSpace = false;
   canvas.copy(
     trackImg,
-    { x: 0, y: 0, width: 600 * 2, height: 28 },
-    {
-      x: trackX,
-      y: 130 - 28,
-      width: 600 * 2,
-      height: 28,
-    },
+    new Rect(  0,  0,  600 * 2,  28 ),
+    new Rect(
+      trackX,
+     130 - 28,
+       600 * 2,
+       28,
+    ),
   );
   trackX -= trackSpeed;
   if (trackX <= -130) {
@@ -156,27 +134,28 @@ function gameLoop() {
 
   if (score >= 100) {
     if (trackSpeed < 5) {
-      canvas.playMusic("./audio/score.wav");
+      // canvas.playMusic("./audio/score.wav");
     }
     trackSpeed = 5;
   }
 
   score += 0.2;
-  canvas.renderFont(
-    mainFont,
-    Math.round(score).toString(),
-    {
-      blended: { color: { r: 4, g: 0, b: 0, a: 255 } },
-    },
-    {
-      x: 540,
-      y: 0,
-      width: 44,
-      height: 40,
-    },
-  );
+  // canvas.renderFont(
+  //   mainFont,
+  //   Math.round(score).toString(),
+  //   {
+  //     blended: { color: { r: 4, g: 0, b: 0, a: 255 } },
+  //   },
+  //   {
+  //     x: 540,
+  //     y: 0,
+  //     width: 44,
+  //     height: 40,
+  //   },
+  // );
+  
   canvas.present();
-  Deno.sleepSync(fps);
+  sleepSync(fps);
 }
 
 // Basic Intro Screen
@@ -184,26 +163,26 @@ function gameLoop() {
 // Update the screen
 canvas.present();
 
-for await (const event of canvas) {
+for await (const event of window.events()) {
   switch (event.type) {
-    case "draw":
+    case EventType.Draw:
       gameLoop();
       break;
-    case "quit":
-      canvas.quit();
+    case EventType.Quit:
+      Deno.exit(0);
       break;
-    case "key_down":
+    case EventType.KeyDown:
       // Space
       if (event.keycode == 32 && !gameOver) {
         intro = false;
         if (!playing) {
           playing = true;
-          canvas.playMusic("./audio/click.wav");
+          // canvas.playMusic("./audio/click.wav");
         }
         if (!isSpace) isSpace = true;
       }
       break;
-    case "mouse_button_down":
+    case EventType.MouseButtonDown:
       // Left click
       if (event.button == 1 && !gameOver) {
         intro = false;

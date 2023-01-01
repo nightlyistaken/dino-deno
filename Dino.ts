@@ -1,15 +1,16 @@
+import { Rect, Surface, Texture } from "https://deno.land/x/sdl2/mod.ts";
 import { Entity } from "./Entity.ts";
 import { canvas } from "./game.ts";
 export class Dino extends Entity {
-  textures: number[];
+  textures: Texture[];
   animationCycle: number;
-  playerSurfaceRun1: number;
-  playerImgJumpRun1: number;
-  playerSurfaceRun2: number;
-  playerImgJumpRun2: number;
-  playerSurfaceJump: number;
-  playerImgJump: number;
-  canvas: import("https://deno.land/x/sdl2@0.2-alpha.1/src/canvas.ts").Canvas;
+  playerSurfaceRun1: Surface;
+  playerImgJumpRun1: Texture;
+  playerSurfaceRun2: Surface;
+  playerImgJumpRun2: Texture;
+  playerSurfaceJump: Surface;
+  playerImgJump: Texture;
+  canvas: import("https://deno.land/x/sdl2/mod.ts").Canvas;
   // 300, 50, 300, 300
   constructor() {
     super({
@@ -20,17 +21,18 @@ export class Dino extends Entity {
     });
     this.canvas = canvas;
     this.animationCycle = 0;
-    this.playerSurfaceRun1 = canvas.loadSurface("sprites/dino-run1.png");
-    this.playerImgJumpRun1 = canvas.createTextureFromSurface(
+    const creator = canvas.textureCreator();
+    this.playerSurfaceRun1 = Surface.fromFile("./sprites/dino-run1.png");
+    this.playerImgJumpRun1 = creator.createTextureFromSurface(
       this.playerSurfaceRun1,
     );
 
-    this.playerSurfaceRun2 = canvas.loadSurface("sprites/dino-run2.png");
-    this.playerImgJumpRun2 = canvas.createTextureFromSurface(
+    this.playerSurfaceRun2 = Surface.fromFile("./sprites/dino-run2.png");
+    this.playerImgJumpRun2 = creator.createTextureFromSurface(
       this.playerSurfaceRun2,
     );
-    this.playerSurfaceJump = canvas.loadSurface("sprites/dino.png");
-    this.playerImgJump = canvas.createTextureFromSurface(
+    this.playerSurfaceJump = Surface.fromFile("./sprites/dino.png");
+    this.playerImgJump = creator.createTextureFromSurface(
       this.playerSurfaceJump,
     );
 
@@ -46,18 +48,14 @@ export class Dino extends Entity {
       : this.textures[this.animationCycle];
     this.canvas.copy(
       texture,
-      {
-        x: 0,
-        y: 0,
-        width: this.width,
-        height: this.height,
-      },
-      {
-        x: this.x,
-        y: this.y,
-        width: 42,
-        height: 42,
-      },
+      new Rect(
+        0,
+         0,
+         this.width,
+         this.height,
+      ),
+      new Rect(this.x, this.y, 42, 42),
+  
     );
   }
 }

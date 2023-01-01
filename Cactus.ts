@@ -1,9 +1,11 @@
+import { Texture } from "https://deno.land/x/sdl2/mod.ts";
+import { Surface } from "https://deno.land/x/sdl2/mod.ts";
 import { Entity } from "./Entity.ts";
 import { canvas } from "./game.ts";
 export class Cacti extends Entity {
-  cactusTextures: number[];
+  cactusTextures: Texture[];
   cactusList: {
-    texture: number;
+    texture: Texture;
     y: number;
     x: number;
     width: number;
@@ -17,17 +19,20 @@ export class Cacti extends Entity {
       width: 54,
       height: 54,
     });
-    const cactusSurface1 = canvas.loadSurface("sprites/cactus.png");
-    const cactusImg1 = canvas.createTextureFromSurface(cactusSurface1);
+    const creator = canvas.textureCreator();
+    const cactusSurface1 = Surface.fromFile("./images/cactus.png");
+    const cactusImg1 = creator.createTextureFromSurface(cactusSurface1);
 
-    const cactusSurface2 = canvas.loadSurface("sprites/cactus-2.png");
-    const cactusImg2 = canvas.createTextureFromSurface(cactusSurface2);
+    const cactusSurface2 = Surface.fromFile("./images/cactus2.png");
+    const cactusImg2 = creator.createTextureFromSurface(cactusSurface2);
 
-    const cactusSurface3 = canvas.loadSurface("sprites/cactus-3.png");
-    const cactusImg3 = canvas.createTextureFromSurface(cactusSurface3);
+    const cactusSurface3 = Surface.fromFile("./images/cactus3.png");
+    const cactusImg3 = creator.createTextureFromSurface(cactusSurface3);
 
-    const cactusSurface4 = canvas.loadSurface("sprites/cactus-4.png");
-    const cactusImg4 = canvas.createTextureFromSurface(cactusSurface4);
+    const cactusSurface4 = Surface.fromFile("./images/cactus4.png");
+    const cactusImg4 = creator.createTextureFromSurface(cactusSurface4);
+    
+
 
     this.cactusTextures = [cactusImg1, cactusImg2, cactusImg3, cactusImg4];
     this.cactusList = [];
