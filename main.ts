@@ -1,15 +1,13 @@
 import { EventType, Rect, Surface, Texture, WindowBuilder } from "deno_sdl2";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
-import { checkCollision } from "./utils/checkCollision.ts";
+import getImage from "./utils/sprites.ts";
+import checkCollision from "./utils/checkCollision.ts";
+import sleepSync from "./utils/sleepSync.ts";
+
 const canvasWidth = 600;
 const canvasHeight = 150;
 
-function sleepSync(timeout: number) {
-  const sab = new SharedArrayBuffer(1024);
-  const int32 = new Int32Array(sab);
-  Atomics.wait(int32, 0, 0, timeout);
-}
 /** Game window */
 const window = new WindowBuilder("Dino Game", canvasWidth, canvasHeight)
   .build();
@@ -18,12 +16,24 @@ export const canvas = window.canvas();
 const dino = new Dino();
 const cacti = new Cacti();
 
-const fps = 10;
+const sleepSyncValue = 10;
 const gravity = 2;
 
-const trackSurface = Surface.fromFile("./sprites/track.png");
+cacti.generateCactus();
+// const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128);
+
+// Key press handlers
+let isSpace = false;
+// Other handlers
+let gameOver = false;
+let intro = true;
+let trackX = 20;
+let score = 0;
+let trackSpeed = 4;
+let playing = false;
+
 const creator = canvas.textureCreator();
-const trackImg = creator.createTextureFromSurface(trackSurface);
+const trackImg = getImage("./sprites/track.png", creator);
 
 function cactus(c: {
   texture: Texture;
@@ -39,18 +49,6 @@ function cactus(c: {
   );
 }
 
-cacti.generateCactus();
-// const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128);
-
-// Key press handlers
-let isSpace = false;
-// Other handlers
-let gameOver = false;
-let intro = true;
-let trackX = 20;
-let score = 0;
-let trackSpeed = 4;
-let playing = false;
 function gameLoop() {
   canvas.setDrawColor(255, 255, 255, 255);
 
@@ -64,9 +62,7 @@ function gameLoop() {
     );
     return;
   }
-
   canvas.clear();
-
   dino.render();
 
   for (let i = 0; i < cacti.cactusList.length; i++) {
@@ -156,12 +152,9 @@ function gameLoop() {
   // );
 
   canvas.present();
-  sleepSync(fps);
+  sleepSync(sleepSyncValue);
 }
 
-// Basic Intro Screen
-
-// Update the screen
 canvas.present();
 
 for await (const event of window.events()) {

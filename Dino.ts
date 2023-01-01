@@ -1,14 +1,13 @@
 import { Rect, Surface, Texture } from "deno_sdl2";
 import { Entity } from "./Entity.ts";
-import { canvas } from "./game.ts";
+import { canvas } from "./main.ts";
+import getImage from "./utils/sprites.ts";
+
 export class Dino extends Entity {
   textures: Texture[];
   animationCycle: number;
-  playerSurfaceRun1: Surface;
   playerImgJumpRun1: Texture;
-  playerSurfaceRun2: Surface;
   playerImgJumpRun2: Texture;
-  playerSurfaceJump: Surface;
   playerImgJump: Texture;
   canvas: import("deno_sdl2").Canvas;
   // 300, 50, 300, 300
@@ -22,19 +21,9 @@ export class Dino extends Entity {
     this.canvas = canvas;
     this.animationCycle = 0;
     const creator = canvas.textureCreator();
-    this.playerSurfaceRun1 = Surface.fromFile("./sprites/dino-run1.png");
-    this.playerImgJumpRun1 = creator.createTextureFromSurface(
-      this.playerSurfaceRun1,
-    );
-
-    this.playerSurfaceRun2 = Surface.fromFile("./sprites/dino-run2.png");
-    this.playerImgJumpRun2 = creator.createTextureFromSurface(
-      this.playerSurfaceRun2,
-    );
-    this.playerSurfaceJump = Surface.fromFile("./sprites/dino.png");
-    this.playerImgJump = creator.createTextureFromSurface(
-      this.playerSurfaceJump,
-    );
+    this.playerImgJumpRun1 = getImage("./sprites/dino-run1.png", creator);
+    this.playerImgJumpRun2 = getImage("./sprites/dino-run2.png", creator);
+    this.playerImgJump = getImage("./sprites/dino.png", creator);
 
     this.textures = [this.playerImgJumpRun1, this.playerImgJumpRun2];
   }

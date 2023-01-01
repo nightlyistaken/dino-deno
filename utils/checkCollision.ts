@@ -9,7 +9,7 @@ interface checkCollisionable {
   h2: number;
 }
 
-export function checkCollision(
+export default function checkCollision(
   entity: checkCollisionable,
 ): boolean {
   return !(entity.x2 > entity.w1 + entity.x1 ||

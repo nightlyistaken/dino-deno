@@ -1,6 +1,7 @@
 import { Surface, Texture } from "deno_sdl2";
 import { Entity } from "./Entity.ts";
-import { canvas } from "./game.ts";
+import { canvas } from "./main.ts";
+import getImage from "./utils/sprites.ts";
 export class Cacti extends Entity {
   cactusTextures: Texture[];
   cactusList: {
@@ -19,17 +20,10 @@ export class Cacti extends Entity {
       height: 54,
     });
     const creator = canvas.textureCreator();
-    const cactusSurface1 = Surface.fromFile("./sprites/cactus.png");
-    const cactusImg1 = creator.createTextureFromSurface(cactusSurface1);
-
-    const cactusSurface2 = Surface.fromFile("./sprites/cactus-2.png");
-    const cactusImg2 = creator.createTextureFromSurface(cactusSurface2);
-
-    const cactusSurface3 = Surface.fromFile("./sprites/cactus-3.png");
-    const cactusImg3 = creator.createTextureFromSurface(cactusSurface3);
-
-    const cactusSurface4 = Surface.fromFile("./sprites/cactus-4.png");
-    const cactusImg4 = creator.createTextureFromSurface(cactusSurface4);
+    const cactusImg1 = getImage("./sprites/cactus.png", creator);
+    const cactusImg2 = getImage("./sprites/cactus-2.png", creator);
+    const cactusImg3 = getImage("./sprites/cactus-3.png", creator);
+    const cactusImg4 = getImage("./sprites/cactus-4.png", creator);
 
     this.cactusTextures = [cactusImg1, cactusImg2, cactusImg3, cactusImg4];
     this.cactusList = [];
