@@ -9,11 +9,6 @@ interface checkCollisionable {
   h2: number;
 }
 
-/**
- * @function checkCollision
- * @param entity
- * @returns {boolean} If it's colliding or not
- */
 export function checkCollision(
   entity: checkCollisionable,
 ): boolean {

@@ -1,4 +1,4 @@
-import { Rect, Surface, Texture } from "https://deno.land/x/sdl2/mod.ts";
+import { Rect, Surface, Texture } from "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts";
 import { Entity } from "./Entity.ts";
 import { canvas } from "./game.ts";
 export class Dino extends Entity {
@@ -10,7 +10,7 @@ export class Dino extends Entity {
   playerImgJumpRun2: Texture;
   playerSurfaceJump: Surface;
   playerImgJump: Texture;
-  canvas: import("https://deno.land/x/sdl2/mod.ts").Canvas;
+  canvas: import("https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts").Canvas;
   // 300, 50, 300, 300
   constructor() {
     super({

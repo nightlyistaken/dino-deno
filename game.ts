@@ -1,4 +1,4 @@
-import { Canvas, EventType, Rect, Surface, Texture, WindowBuilder } from "https://deno.land/x/sdl2/mod.ts";
+import { Canvas, EventType, Rect, Surface, Texture, WindowBuilder } from "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
 import { checkCollision } from "./utils/checkCollision.ts";
@@ -20,7 +20,7 @@ const cacti = new Cacti();
 const fps = 10;
 const gravity = 2;
 
-const trackSurface = Surface.fromFile("./images/track.png");
+const trackSurface = Surface.fromFile("./sprites/track.png");
 const creator = canvas.textureCreator();
 const trackImg = creator.createTextureFromSurface(trackSurface);
 
@@ -173,7 +173,9 @@ for await (const event of window.events()) {
       break;
     case EventType.KeyDown:
       // Space
-      if (event.keycode == 32 && !gameOver) {
+      console.log(event)
+      if (event.keysym.sym == 32 && !gameOver) {
+        console.log(event)
         intro = false;
         if (!playing) {
           playing = true;
