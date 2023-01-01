@@ -11,5 +11,3 @@ deno run --allow-read --allow-net --allow-run --allow-env --allow-write --unstab
 ## How to play
 
 - Press space to jump
-- Press down to duck
-- Press up to jump

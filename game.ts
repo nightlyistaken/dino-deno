@@ -1,10 +1,4 @@
-import {
-  EventType,
-  Rect,
-  Surface,
-  Texture,
-  WindowBuilder,
-} from "deno_sdl2";
+import { EventType, Rect, Surface, Texture, WindowBuilder } from "deno_sdl2";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
 import { checkCollision } from "./utils/checkCollision.ts";

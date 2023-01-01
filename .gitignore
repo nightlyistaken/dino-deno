@@ -1,6 +1,4 @@
-deno_sdl2
-dinosaur-find-deno
-some_examples.txt
+.vscode
 
 # For custom startup
 start.sh

@@ -1,5 +1,5 @@
 {
-    "imports": {
-        "deno_sdl2": "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts"
-    }
+  "imports": {
+    "deno_sdl2": "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts"
+  }
 }

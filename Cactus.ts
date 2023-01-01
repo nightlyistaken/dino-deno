@@ -1,7 +1,4 @@
-import {
-  Surface,
-  Texture,
-} from "deno_sdl2";
+import { Surface, Texture } from "deno_sdl2";
 import { Entity } from "./Entity.ts";
 import { canvas } from "./game.ts";
 export class Cacti extends Entity {
