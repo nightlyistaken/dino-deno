@@ -1,4 +1,10 @@
-import { Canvas, EventType, Rect, Surface, Texture, WindowBuilder } from "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts";
+import {
+  EventType,
+  Rect,
+  Surface,
+  Texture,
+  WindowBuilder,
+} from "deno_sdl2";
 import { Dino } from "./Dino.ts";
 import { Cacti } from "./Cactus.ts";
 import { checkCollision } from "./utils/checkCollision.ts";
@@ -11,7 +17,8 @@ function sleepSync(timeout: number) {
   Atomics.wait(int32, 0, 0, timeout);
 }
 /** Game window */
-const window = new WindowBuilder("Dino Game", canvasWidth, canvasHeight).build();
+const window = new WindowBuilder("Dino Game", canvasWidth, canvasHeight)
+  .build();
 export const canvas = window.canvas();
 
 const dino = new Dino();
@@ -34,12 +41,12 @@ function cactus(c: {
   canvas.copy(
     c.texture,
     new Rect(0, 0, c.width, c.height),
-    new Rect(c.x, c.y, 34, 34)
+    new Rect(c.x, c.y, 34, 34),
   );
 }
 
 cacti.generateCactus();
-const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128);
+// const mainFont = canvas.loadFont("./fonts/mainfont.ttf", 128);
 
 // Key press handlers
 let isSpace = false;
@@ -116,12 +123,12 @@ function gameLoop() {
   isSpace = false;
   canvas.copy(
     trackImg,
-    new Rect(  0,  0,  600 * 2,  28 ),
+    new Rect(0, 0, 600 * 2, 28),
     new Rect(
       trackX,
-     130 - 28,
-       600 * 2,
-       28,
+      130 - 28,
+      600 * 2,
+      28,
     ),
   );
   trackX -= trackSpeed;
@@ -153,7 +160,7 @@ function gameLoop() {
   //     height: 40,
   //   },
   // );
-  
+
   canvas.present();
   sleepSync(fps);
 }
@@ -173,9 +180,9 @@ for await (const event of window.events()) {
       break;
     case EventType.KeyDown:
       // Space
-      console.log(event)
+      console.log(event);
       if (event.keysym.sym == 32 && !gameOver) {
-        console.log(event)
+        console.log(event);
         intro = false;
         if (!playing) {
           playing = true;

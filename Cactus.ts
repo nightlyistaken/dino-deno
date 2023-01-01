@@ -1,4 +1,7 @@
-import { Texture, Surface } from "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts";
+import {
+  Surface,
+  Texture,
+} from "deno_sdl2";
 import { Entity } from "./Entity.ts";
 import { canvas } from "./game.ts";
 export class Cacti extends Entity {
@@ -30,8 +33,6 @@ export class Cacti extends Entity {
 
     const cactusSurface4 = Surface.fromFile("./sprites/cactus-4.png");
     const cactusImg4 = creator.createTextureFromSurface(cactusSurface4);
-    
-
 
     this.cactusTextures = [cactusImg1, cactusImg2, cactusImg3, cactusImg4];
     this.cactusList = [];

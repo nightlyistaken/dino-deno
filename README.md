@@ -13,4 +13,3 @@ deno run --allow-read --allow-net --allow-run --allow-env --allow-write --unstab
 - Press space to jump
 - Press down to duck
 - Press up to jump
-

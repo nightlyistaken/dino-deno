@@ -1,0 +1,7 @@
+{
+  "version": "2",
+  "remote": {
+    "https://deno.land/x/byte_type@0.1.7/ffi.ts": "5bc603fd9d0b695bcd1bdaeb45e6e34b0925d5cd8da41ceaec290570a55287e0",
+    "https://raw.githubusercontent.com/littledivy/deno_sdl2/main/mod.ts": "a80410c5f199bf920904c251b7d92d331ecd401be33a3f487a64cea84551dd04"
+  }
+}
